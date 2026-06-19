@@ -1,0 +1,14 @@
+{
+  "rules": {
+    "<trigger>": "< Ya reached Sammie please leave a message 😊>",
+    "<hey>": "< Ya reached Sammie please leave a message 😊>",
+    "<hi>": "<hie this is shawnny currently busy>",
+    "hy": "Hello there",
+    "hie": "Hello there",
+    "hi": "Hello there",
+    "": "",
+    "hello": "%s",
+    "peace": "peace right back"
+  },
+  "enabled": true
+}
