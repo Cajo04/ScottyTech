@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover"/>
+<title>Scotty_C — WhatsApp Bot</title>
+<style>
+* { margin: 0; padding: 0; box-sizing: border-box; }
+:root {
+  --primary: #00e5ff;
+  --primary2: #00b4d8;
+  --accent: #7c3aed;
+  --green: #25d366;
+  --dark: #060810;
+  --card: rgba(10,14,24,0.82);
+  --glow: rgba(0,229,255,0.25);
+}
+body {
+  min-height: 100vh;
+  background: linear-gradient(135deg, #060810 0%, #0a0e1a 100%);
+  font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  color: #e2e8f0;
+  overflow-x: hidden;
+}
+.bg {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background:
+    radial-gradient(ellipse at 20% 30%, rgba(0,229,255,0.06) 0%, transparent 60%),
+    radial-gradient(ellipse at 80% 70%, rgba(124,58,237,0.07) 0%, transparent 60%);
+}
+.grid-lines {
+  position: fixed; inset: 0; pointer-events: none; z-index: 0;
+  background-image:
+    linear-gradient(rgba(0,229,255,0.04) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,229,255,0.04) 1px, transparent 1px);
+  background-size: 50px 50px;
+  animation: gridMove 20s linear infinite;
+}
+@keyframes gridMove { 0%{transform:translateY(0)} 100%{transform:translateY(50px)} }
+.container {
+  position: relative; z-index: 1;
+  max-width: 480px; margin: 0 auto;
+  padding: 40px 20px;
+  display: flex; flex-direction: column; align-items: center; gap: 28px;
+}
+.logo-section { text-align: center; }
+.bot-icon {
+  width: 90px; height: 90px;
+  background: linear-gradient(135deg, var(--primary), var(--accent));
+  border-radius: 24px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 44px;
+  margin: 0 auto 16px;
+  box-shadow: 0 0 40px var(--glow);
+  animation: pulse 3s ease-in-out infinite;
+}
+@keyframes pulse {
+  0%,100% { box-shadow: 0 0 40px var(--glow); }
+  50% { box-shadow: 0 0 70px rgba(0,229,255,0.4); }
+}
+.bot-name {
+  font-size: 2.2rem; font-weight: 800; letter-spacing: 2px;
+  background: linear-gradient(90deg, var(--primary), var(--accent));
+  -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+}
+.bot-sub { color: #94a3b8; font-size: 0.9rem; margin-top: 6px; }
+.badge {
+  display: inline-block; margin-top: 10px;
+  background: rgba(0,229,255,0.1); border: 1px solid rgba(0,229,255,0.3);
+  color: var(--primary); padding: 4px 14px; border-radius: 20px; font-size: 0.8rem;
+}
+.card {
+  width: 100%;
+  background: var(--card);
+  border: 1px solid rgba(0,229,255,0.15);
+  border-radius: 20px;
+  padding: 28px 24px;
+  backdrop-filter: blur(12px);
+  box-shadow: 0 8px 40px rgba(0,0,0,0.4);
+}
+.card h2 { font-size: 1.1rem; color: var(--primary); margin-bottom: 20px; display: flex; align-items: center; gap: 8px; }
+.input-wrap { position: relative; margin-bottom: 16px; }
+.input-wrap label { display: block; color: #94a3b8; font-size: 0.82rem; margin-bottom: 6px; }
+.input-wrap input {
+  width: 100%; padding: 13px 16px;
+  background: rgba(255,255,255,0.04);
+  border: 1px solid rgba(0,229,255,0.2);
+  border-radius: 12px; color: #e2e8f0; font-size: 1rem; outline: none;
+  transition: border 0.2s, box-shadow 0.2s;
+}
+.input-wrap input:focus { border-color: var(--primary); box-shadow: 0 0 0 3px rgba(0,229,255,0.1); }
+.btn {
+  width: 100%; padding: 14px;
+  background: linear-gradient(135deg, var(--primary), var(--primary2));
+  border: none; border-radius: 12px;
+  color: #060810; font-size: 1rem; font-weight: 700; cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.2s;
+}
+.btn:hover { transform: translateY(-1px); box-shadow: 0 6px 24px rgba(0,229,255,0.35); }
+.btn:active { transform: translateY(0); }
+.btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+.code-box {
+  display: none; margin-top: 20px;
+  background: rgba(0,229,255,0.06);
+  border: 2px solid rgba(0,229,255,0.3);
+  border-radius: 16px; padding: 24px; text-align: center;
+}
+.code-box.show { display: block; animation: fadeIn 0.4s ease; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(8px)} to{opacity:1;transform:none} }
+.code-label { color: #94a3b8; font-size: 0.82rem; margin-bottom: 12px; }
+.code-value {
+  font-size: 2.2rem; font-weight: 900; letter-spacing: 8px;
+  color: var(--primary); font-family: 'Courier New', monospace;
+}
+.code-steps { margin-top: 16px; text-align: left; }
+.code-steps li { color: #cbd5e1; font-size: 0.83rem; padding: 4px 0; list-style: none; padding-left: 0; }
+.code-steps li::before { content: "→ "; color: var(--primary); }
+.status-bar {
+  margin-top: 14px; padding: 10px 16px;
+  border-radius: 10px; font-size: 0.85rem; text-align: center; display: none;
+}
+.status-bar.info { background: rgba(0,229,255,0.08); color: var(--primary); border: 1px solid rgba(0,229,255,0.2); display: block; }
+.status-bar.error { background: rgba(239,68,68,0.08); color: #f87171; border: 1px solid rgba(239,68,68,0.2); display: block; }
+.status-bar.success { background: rgba(37,211,102,0.08); color: var(--green); border: 1px solid rgba(37,211,102,0.2); display: block; }
+.features { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; width: 100%; }
+.feat {
+  background: var(--card); border: 1px solid rgba(255,255,255,0.06);
+  border-radius: 14px; padding: 16px 14px; text-align: center;
+}
+.feat .icon { font-size: 1.6rem; margin-bottom: 6px; }
+.feat .label { font-size: 0.78rem; color: #94a3b8; }
+.feat .val { font-size: 1rem; font-weight: 700; color: #e2e8f0; }
+.footer { color: #475569; font-size: 0.78rem; text-align: center; }
+</style>
+</head>
+<body>
+<div class="bg"></div>
+<div class="grid-lines"></div>
+<div class="container">
+
+  <div class="logo-section">
+    <div class="bot-icon">🤖</div>
+    <div class="bot-name">SCOTTY_C</div>
+    <div class="bot-sub">Multi-User WhatsApp Bot</div>
+    <div class="badge">⚡ v3.0 — 110+ Commands</div>
+  </div>
+
+  <div class="features">
+    <div class="feat"><div class="icon">⚡</div><div class="val">110+</div><div class="label">Commands</div></div>
+    <div class="feat"><div class="icon">👥</div><div class="val">Multi</div><div class="label">User</div></div>
+    <div class="feat"><div class="icon">🤖</div><div class="val">AI</div><div class="label">Powered</div></div>
+    <div class="feat"><div class="icon">🔒</div><div class="val">Secure</div><div class="label">Sessions</div></div>
+  </div>
+
+  <div class="card">
+    <h2>🔗 Pair Your Number</h2>
+    <div class="input-wrap">
+      <label>WhatsApp Number (International Format)</label>
+      <input type="tel" id="phone" placeholder="e.g. 263788114185" maxlength="15"/>
+    </div>
+    <button class="btn" id="pairBtn" onclick="pairNow()">⚡ Get Pairing Code</button>
+    <div class="status-bar" id="statusBar"></div>
+    <div class="code-box" id="codeBox">
+      <div class="code-label">📲 Enter this code in WhatsApp → Linked Devices → Link with phone number</div>
+      <div class="code-value" id="codeVal">----</div>
+      <div class="code-steps">
+        <ul>
+          <li>Open WhatsApp on your phone</li>
+          <li>Go to Settings → Linked Devices</li>
+          <li>Tap "Link with phone number"</li>
+          <li>Enter the code above — expires in 5 min</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <div class="footer">Scotty_C © 2025 — Always On, Always Ready ⚡</div>
+</div>
+
+<script>
+function setStatus(msg, type) {
+  const el = document.getElementById('statusBar');
+  el.textContent = msg; el.className = 'status-bar ' + type;
+}
+async function pairNow() {
+  const phone = document.getElementById('phone').value.replace(/\D/g,'');
+  if (!phone || phone.length < 7) return setStatus('❌ Enter a valid number.', 'error');
+  const btn = document.getElementById('pairBtn');
+  btn.disabled = true; btn.textContent = '⏳ Generating...';
+  setStatus('⏳ Connecting to WhatsApp...', 'info');
+  document.getElementById('codeBox').classList.remove('show');
+  try {
+    const res = await fetch('/pair', {
+      method: 'POST', headers: {'Content-Type':'application/json'},
+      body: JSON.stringify({ phone })
+    });
+    const data = await res.json();
+    if (data.success && data.code) {
+      document.getElementById('codeVal').textContent = data.code;
+      document.getElementById('codeBox').classList.add('show');
+      setStatus('✅ Code ready! Enter it in WhatsApp within 5 minutes.', 'success');
+    } else if (data.status === 'already_connected') {
+      setStatus('✅ Bot already running for this number!', 'success');
+    } else {
+      setStatus('❌ ' + (data.error || 'Something went wrong. Try again.'), 'error');
+    }
+  } catch(e) {
+    setStatus('❌ Network error. Is the server running?', 'error');
+  } finally {
+    btn.disabled = false; btn.textContent = '⚡ Get Pairing Code';
+  }
+}
+document.getElementById('phone').addEventListener('keydown', e => { if (e.key === 'Enter') pairNow(); });
+</script>
+</body>
+</html>
