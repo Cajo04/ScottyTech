@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: scotty-c
+    runtime: node
+    buildCommand: npm install
+    startCommand: node index.js
+    envVars:
+      - key: PORT
+        value: 3100
+      - key: BOT_NAME
+        value: Scotty♤C
+      - key: NODE_ENV
+        value: production
+    autoDeploy: true
